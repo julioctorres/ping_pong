@@ -108,7 +108,70 @@
 				draw(this.ctx,el);
 			};
 		},
-    }
+		check_collisions: function(){
+
+			for (var i = this.board.bars.length - 1; i >= 0; i--) {
+				var bar = this.board.bars[i];
+				if(hit(bar, this.board.ball)){
+
+					this.board.ball.collision(bar);
+				}
+			};
+		},
+		play: function(){
+			if(this.board.playing){
+				this.clean();
+				this.draw();
+				this.check_collisions();
+				this.board.ball.move();	
+			}
+			
+		}
+	}
+
+	function hit(a,b){
+		//Revisa si a colisiona con b
+		var hit = false;
+		//Colsiones horizontales
+		if(b.x + b.width >= a.x && b.x < a.x + a.width)
+		{
+			//Colisiones verticales
+			if(b.y + b.height >= a.y && b.y < a.y + a.height)
+				hit = true;
+		}
+		//Colisión de a con b
+		if(b.x <= a.x && b.x + b.width >= a.x + a.width)
+		{
+			if(b.y <= a.y && b.y + b.height >= a.y + a.height)
+				hit = true;
+		}
+		//Colisión b con a
+		if(a.x <= b.x && a.x + a.width >= b.x + b.width)
+		{
+			if(a.y <= b.y && a.y + a.height >= b.y + b.height)
+				hit = true;
+		}
+		
+		return hit;
+	}
+
+	function draw(ctx,element){
+		
+		switch(element.kind){
+			case "rectangle":
+
+				ctx.fillRect(element.x,element.y,element.width,element.height);
+				break;
+			case "circle": 
+				ctx.beginPath();
+				ctx.arc(element.x,element.y,element.radius,0,7);
+				ctx.fill();
+				ctx.closePath();
+				break;
+		}	
+		
+		
+	}
 })();
 
 var board = new Board(800,400);
